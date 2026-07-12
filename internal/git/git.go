@@ -35,6 +35,15 @@ func Commit(message string) (string, error) {
 	return string(out), nil
 }
 
+func Push() (string, error) {
+	cmd := exec.Command("git", "push")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return string(out), fmt.Errorf("push failed: %w", err)
+	}
+	return string(out), nil
+}
+
 func GetDiffStats(diff string) string {
 	var added, removed, files []string
 	lines := strings.Split(diff, "\n")

@@ -116,4 +116,18 @@ func main() {
 	}
 
 	fmt.Println("✓ Commit successful")
+
+	fmt.Print("\nPush now? (y/n): ")
+	pushInput, _ := reader.ReadString('\n')
+	pushInput = pushInput[:len(pushInput)-1]
+
+	if pushInput == "y" || pushInput == "Y" {
+		fmt.Println("Pushing...")
+		pushOut, pushErr := git.Push()
+		if pushErr != nil {
+			fmt.Println(pushOut)
+			os.Exit(1)
+		}
+		fmt.Println("✓ Push successful")
+	}
 }
