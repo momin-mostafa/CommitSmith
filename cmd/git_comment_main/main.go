@@ -41,10 +41,14 @@ func main() {
 
 	if err := client.ValidateModel(); err != nil {
 		models, _ := client.ListModels()
-		fmt.Printf("Configured model not found.\n\nAvailable models:\n")
+		fmt.Printf("Configured model not found.\n\n")
+		fmt.Printf("Configured model: %s\n\n", cfg.Model)
+		fmt.Printf("Available models:\n")
 		for _, m := range models {
-			fmt.Printf("- %s\n", m)
+			fmt.Printf("  - %s\n", m)
 		}
+		fmt.Printf("\nFix: update ~/.git_comment.yaml with one of the above models.\n")
+		fmt.Printf("Example:\n  model: %s\n", models[0])
 		os.Exit(1)
 	}
 
