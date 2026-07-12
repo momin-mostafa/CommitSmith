@@ -1,4 +1,4 @@
-model: llama3.2
+model: quesn
 host: http://localhost:11434
 temperature: 0.2
 max_options: 3
