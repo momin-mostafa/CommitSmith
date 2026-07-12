@@ -11,33 +11,44 @@ import (
 	"github.com/git-comment/pkg/models"
 )
 
-const systemPrompt = `You are an expert software engineer responsible for writing Git commit messages.
+type Client struct {
+	host                 string
+	model                string
+	temp                 float64
+	maxOptions           int
+	useConventional      bool
+	client               *http.Client
+}
+
+func NewClient(host, model string, temperature float64, maxOptions int, useConventional bool) *Client {
+	return &Client{
+		host:            host,
+		model:           model,
+		temp:            temperature,
+		maxOptions:      maxOptions,
+		useConventional: useConventional,
+		client:          &http.Client{},
+	}
+}
+
+func (c *Client) buildSystemPrompt() string {
+	prompt := `You are an expert software engineer responsible for writing Git commit messages.
 
 Analyze the provided Git diff and identify the primary intent of the changes.
-
-Return up to three concise commit messages that follow Conventional Commits where applicable.
 
 Do not explain the diff.
 Do not include numbering or markdown.
 Output only one commit message per line.
 Prefer clarity over verbosity.
-Conventional Commits format. eg : type(scope): description
 Each message must be on its own line, maximum 72 characters, no trailing period.`
 
-type Client struct {
-	host   string
-	model  string
-	temp   float64
-	client *http.Client
-}
-
-func NewClient(host, model string, temperature float64) *Client {
-	return &Client{
-		host:   host,
-		model:  model,
-		temp:   temperature,
-		client: &http.Client{},
+	if c.useConventional {
+		prompt += "\nFollow Conventional Commits format. eg: type(scope): description"
 	}
+
+	prompt += fmt.Sprintf("\nReturn up to %d concise commit messages.", c.maxOptions)
+
+	return prompt
 }
 
 func (c *Client) CheckAvailability() error {
@@ -95,7 +106,7 @@ func (c *Client) GenerateCommitMessages(diff string) ([]string, error) {
 			Temperature: c.temp,
 		},
 		Messages: []models.Message{
-			{Role: "system", Content: systemPrompt},
+			{Role: "system", Content: c.buildSystemPrompt()},
 			{Role: "user", Content: fmt.Sprintf("Analyze this Git diff and generate commit messages:\n\n%s", diff)},
 		},
 	}
@@ -121,11 +132,11 @@ func (c *Client) GenerateCommitMessages(diff string) ([]string, error) {
 		return nil, err
 	}
 
-	messages := parseResponse(ollamaResp.Message.Content)
+	messages := c.parseResponse(ollamaResp.Message.Content)
 	return messages, nil
 }
 
-func parseResponse(content string) []string {
+func (c *Client) parseResponse(content string) []string {
 	lines := strings.Split(strings.TrimSpace(content), "\n")
 	var messages []string
 
@@ -145,8 +156,8 @@ func parseResponse(content string) []string {
 		}
 	}
 
-	if len(messages) > 3 {
-		messages = messages[:3]
+	if len(messages) > c.maxOptions {
+		messages = messages[:c.maxOptions]
 	}
 	return messages
 }
