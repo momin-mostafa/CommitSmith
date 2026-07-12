@@ -148,10 +148,14 @@ func (c *Client) parseResponse(content string) []string {
 		line = strings.TrimPrefix(line, "1.")
 		line = strings.TrimPrefix(line, "2.")
 		line = strings.TrimPrefix(line, "3.")
+		line = strings.TrimPrefix(line, "4.")
+		line = strings.TrimPrefix(line, "5.")
 		line = strings.TrimPrefix(line, "- ")
+		line = strings.TrimPrefix(line, "* ")
 		line = strings.TrimSpace(line)
+		line = strings.TrimRight(line, ".")
 
-		if len(line) > 0 && len(line) <= 72 && !strings.HasSuffix(line, ".") {
+		if len(line) > 0 && len(line) <= 72 {
 			messages = append(messages, line)
 		}
 	}
