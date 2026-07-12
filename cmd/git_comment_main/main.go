@@ -32,7 +32,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	client := ollama.NewClient(cfg.Host, cfg.Model, cfg.Temperature)
+	client := ollama.NewClient(cfg.Host, cfg.Model, cfg.Temperature, cfg.MaxOptions, cfg.UseConventionalCommits)
 
 	if err := client.CheckAvailability(); err != nil {
 		fmt.Println("Unable to connect to Ollama.\nEnsure Ollama is running.")
