@@ -40,16 +40,16 @@ func main() {
 	}
 
 	if err := client.ValidateModel(); err != nil {
-		models, _ := client.ListModels()
-		fmt.Printf("Configured model not found.\n\n")
-		fmt.Printf("Configured model: %s\n\n", cfg.Model)
-		fmt.Printf("Available models:\n")
-		for _, m := range models {
-			fmt.Printf("  - %s\n", m)
+		models, listErr := client.ListModels()
+		if listErr != nil || len(models) == 0 {
+			fmt.Printf("Model not found and no alternatives available.\n")
+			fmt.Printf("Configured model: %s\n", cfg.Model)
+			os.Exit(1)
 		}
-		fmt.Printf("\nFix: update ~/.git_comment.yaml with one of the above models.\n")
-		fmt.Printf("Example:\n  model: %s\n", models[0])
-		os.Exit(1)
+		firstModel := models[0]
+		fmt.Printf("Configured model '%s' not found. Auto-selecting '%s'.\n", cfg.Model, firstModel)
+		client = ollama.NewClient(cfg.Host, firstModel, cfg.Temperature, cfg.MaxOptions, cfg.UseConventionalCommits)
+		cfg.Model = firstModel
 	}
 
 	diff, err := git.GetStagedDiff()
