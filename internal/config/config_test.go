@@ -8,7 +8,7 @@ import (
 
 func TestLoadDefaults(t *testing.T) {
 	homeDir, _ := os.UserHomeDir()
-	configPath := filepath.Join(homeDir, ".git_comment.yaml")
+	configPath := filepath.Join(homeDir, ".commitsmith.yaml")
 	_, err := os.Stat(configPath)
 	if err == nil {
 		t.Skip("Skipping test: config file exists")
@@ -35,7 +35,7 @@ func TestLoadDefaults(t *testing.T) {
 
 func TestLoadFromFile(t *testing.T) {
 	dir := t.TempDir()
-	configPath := filepath.Join(dir, ".git_comment.yaml")
+	configPath := filepath.Join(dir, ".commitsmith.yaml")
 
 	content := `model: deepseek-coder
 host: http://localhost:11435

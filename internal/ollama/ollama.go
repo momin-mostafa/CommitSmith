@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/git-comment/pkg/models"
+	"github.com/commitsmith/pkg/models"
 )
 
 type Client struct {

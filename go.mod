@@ -1,4 +1,4 @@
-module github.com/git-comment
+module github.com/commitsmith
 
 go 1.25.4
 

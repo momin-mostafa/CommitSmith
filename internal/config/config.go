@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/git-comment/pkg/models"
+	"github.com/commitsmith/pkg/models"
 	"gopkg.in/yaml.v3"
 )
 
@@ -32,7 +32,7 @@ func Load() (*models.Config, error) {
 		return config, nil
 	}
 
-	configPath := filepath.Join(homeDir, ".git_comment.yaml")
+	configPath := filepath.Join(homeDir, ".commitsmith.yaml")
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		if os.IsNotExist(err) {

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "Building git_comment..."
-go build -o git_comment ./cmd/git_comment_main
+echo "Building CommitSmith..."
+go build -o cmtr ./cmd/cmtr
 if [ $? -eq 0 ]; then
-    echo "✓ Build successful: ./git_comment"
+    echo "✓ Build successful: ./cmtr"
 else
     echo "✗ Build failed"
     exit 1

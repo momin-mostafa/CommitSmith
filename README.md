@@ -1,6 +1,6 @@
-# Git Comment
+# CommitSmith
 
-Local LLM-powered Git commit message generator. Analyzes your staged changes and suggests meaningful commit messages using Ollama.
+Local LLM-powered Git commit message generator. Forges meaningful commit messages from your staged changes using Ollama.
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ cd git_comment_maker
 ./build.sh
 ```
 
-This creates a `git_comment` executable in the current directory.
+This creates a `cmtr` executable in the current directory.
 
 ## Usage
 
@@ -25,23 +25,71 @@ This creates a `git_comment` executable in the current directory.
 git add .
 ```
 
-2. Run git_comment:
+2. Run CommitSmith:
 ```bash
-./git_comment
+./cmtr
 ```
 
-3. Select a commit message (1-3) or press `q` to cancel.
+3. Pick a suggested message (1-3), enter `0` to write your own, or `q` to cancel.
 
-**Options:**
-- `-d` — Show staged diff before generating messages
+### Options
+
+| Flag | Description |
+|------|-------------|
+| `-d` | Show staged diff before generating messages |
 
 ```bash
-./git_comment -d
+./cmtr -d
 ```
+
+### Example Output
+
+```
+Analyzing staged changes...
+
+Suggested commit messages:
+1. feat(auth): add JWT token refresh endpoint
+2. fix(auth): handle expired token edge case
+3. chore(auth): update token validation middleware
+0. Write your own commit message
+
+Choose (1-3, 0 to write your own) or q: 1
+
+Running
+
+git commit -m "feat(auth): add JWT token refresh endpoint"
+
+✓ Commit successful
+
+Push now? (y/N):
+```
+
+When you choose `0` (write your own):
+
+```
+Choose (1-3, 0 to write your own) or q: 0
+
+Enter your commit message: update the token stuff
+
+How would you like to proceed?
+1. Formatted (refine with LLM)
+2. Unformatted (use as-is)
+
+Choose (1-2): 1
+Formatting commit message...
+
+Running
+
+git commit -m "fix(auth): update token refresh logic"
+
+✓ Commit successful
+```
+
+Pressing Enter without input selects the first suggestion.
 
 ## Configuration
 
-Create `~/.git_comment.yaml` to customize settings:
+On first run, `~/.commitsmith.yaml` is created automatically with defaults. Customize as needed:
 
 ```yaml
 model: qwen2.5-coder
@@ -51,12 +99,13 @@ max_options: 3
 use_conventional_commits: true
 ```
 
-**Defaults:**
-- `model`: qwen2.5-coder
-- `host`: http://localhost:11434
-- `temperature`: 0.2
-- `max_options`: 3
-- `use_conventional_commits`: true
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `model` | `qwen2.5-coder` | Ollama model to use. Falls back to first available model if not found. |
+| `host` | `http://localhost:11434` | Ollama API endpoint |
+| `temperature` | `0.2` | Generation temperature (0-2). Lower = more deterministic. |
+| `max_options` | `3` | Number of commit message suggestions to generate |
+| `use_conventional_commits` | `true` | Follow [Conventional Commits](https://www.conventionalcommits.org/) format |
 
 ## Error Messages
 
@@ -77,7 +126,7 @@ go test ./...
 ./build.sh
 
 # Install (optional)
-go install ./cmd/git_comment
+go install ./cmd/cmtr
 ```
 
 ## Project Structure
@@ -86,18 +135,17 @@ go install ./cmd/git_comment
 git_comment_maker/
 ├── build.sh
 ├── cmd/
-│   └── git_comment/
+│   └── cmtr/
 │       └── main.go
 ├── internal/
-│   ├── config/
-│   ├── git/
-│   └── ollama/
+│   ├── config/        # YAML config loading and defaults
+│   ├── git/           # Git operations (diff, commit, push)
+│   └── ollama/        # Ollama API client and prompt handling
 ├── pkg/
-│   └── models/
-└── tasks.md
+│   └── models/        # Shared data types
+└── README.md
 ```
 
 ## License
 
 MIT
-# git_comment_generator_with_go_LLM
